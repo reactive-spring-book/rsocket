@@ -21,13 +21,16 @@ record Client(BootifulProperties properties) {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void ready() {
-		var socket = RSocketConnector.create()//
+		var socket = RSocketConnector//
+				.create()//
 				.reconnect(Retry.backoff(50, Duration.ofMillis(500)))//
 				.connect(TcpClientTransport.create(this.properties.getRsocket().getHostname(),
 						this.properties.getRsocket().getPort()));
-		RSocketClient.from(socket)//
+		RSocketClient//
+				.from(socket)//
 				.requestChannel(Flux.interval(Duration.ofSeconds(1)).map(i -> DefaultPayload.create("Hello @ " + i)))//
 				.map(Payload::getDataUtf8)//
-				.take(10).subscribe(log::info);
+				.take(10)//
+				.subscribe(log::info);
 	}
 }

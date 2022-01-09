@@ -20,9 +20,11 @@ record Client(BootifulProperties properties) {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void ready() {
-		var source = RSocketConnector.create().reconnect(Retry.backoff(50, Duration.ofMillis(500)))
+		var source = RSocketConnector.create()//
+				.reconnect(Retry.backoff(50, Duration.ofMillis(500)))//
 				.connect(TcpClientTransport.create(this.properties.getRsocket().getHostname(),
 						this.properties.getRsocket().getPort()));
+
 		RSocketClient.from(source).fireAndForget(Mono.just(DefaultPayload.create("Reactive Spring!"))).block();
 	}
 

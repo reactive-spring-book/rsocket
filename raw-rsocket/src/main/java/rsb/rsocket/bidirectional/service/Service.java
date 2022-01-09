@@ -24,17 +24,83 @@ import java.util.stream.Stream;
 
 import static rsb.rsocket.bidirectional.ClientHealthState.STOPPED;
 
+@Slf4j
 @Component
-record Service(BootifulProperties properties) {
+@RequiredArgsConstructor
+class Service implements SocketAcceptor {
+
+	private final BootifulProperties properties;
+
+	private final EncodingUtils encodingUtils;
 
 	@EventListener(ApplicationReadyEvent.class)
-	public void ready() {
+	public void ready() throws Exception {
+		RSocketServer.create((setup, sendingSocket) -> Mono.just(new RSocket() {
+			@Override
+			public Flux<Payload> requestStream(Payload payload) {
+				return doStream(sendingSocket, payload);
+			}
+		})).bind(TcpServerTransport.create(this.properties.getRsocket().getHostname(),
+				this.properties.getRsocket().getPort()))
+				.doOnNext(cc -> log.info("server started on the address " + cc.address())) //
+				.block();
+	}
 
-		var socketAcceptor = SocketAcceptor.forRequestChannel(payloads -> Flux.from(payloads).map(Payload::getDataUtf8)
-				.map(s -> "Echo: " + s).map(DefaultPayload::create));
-		RSocketServer.create(socketAcceptor).bindNow(
-				TcpServerTransport.create(properties.getRsocket().getHostname(), properties.getRsocket().getPort()));
+	@Override
+	public Mono<RSocket> accept(ConnectionSetupPayload setup, RSocket clientRsocket) {
 
+		// <1>
+		return Mono.just(new RSocket() {
+
+			@Override
+			public Flux<Payload> requestStream(Payload payload) {
+
+				// <2>
+				var clientHealthStateFlux = clientRsocket//
+						.requestStream(DefaultPayload.create(new byte[0]))//
+						.map(p -> encodingUtils.decode(p.getDataUtf8(), ClientHealthState.class))//
+						.filter(chs -> chs.state().equalsIgnoreCase(STOPPED));
+
+				// <3>
+				var replyPayloadFlux = Flux//
+						.fromStream(Stream.generate(() -> {
+							var greetingRequest = encodingUtils.decode(payload.getDataUtf8(), GreetingRequest.class);
+							var message = "Hello, " + greetingRequest.name() + " @ " + Instant.now() + "!";
+							return new GreetingResponse(message);
+						}))//
+						.delayElements(Duration.ofSeconds(Math.max(3, (long) (Math.random() * 10))))//
+						.doFinally(signalType -> log.info("finished."));
+
+				return replyPayloadFlux // <4>
+						.takeUntilOther(clientHealthStateFlux)//
+						.map(encodingUtils::encode)//
+						.map(DefaultPayload::create);
+			}
+		});
+	}
+
+	private Flux<Payload> doStream(RSocket clientRsocket, Payload payload) {
+
+		// <2>
+		var clientHealthStateFlux = clientRsocket//
+				.requestStream(DefaultPayload.create(new byte[0]))//
+				.map(p -> encodingUtils.decode(p.getDataUtf8(), ClientHealthState.class))//
+				.filter(chs -> chs.state().equalsIgnoreCase(STOPPED));
+
+		// <3>
+		var replyPayloadFlux = Flux//
+				.fromStream(Stream.generate(() -> {
+					var greetingRequest = encodingUtils.decode(payload.getDataUtf8(), GreetingRequest.class);
+					var message = "Hello, " + greetingRequest.name() + " @ " + Instant.now() + "!";
+					return new GreetingResponse(message);
+				}))//
+				.delayElements(Duration.ofSeconds(Math.max(3, (long) (Math.random() * 10))))//
+				.doFinally(signalType -> log.info("finished."));
+
+		return replyPayloadFlux // <4>
+				.takeUntilOther(clientHealthStateFlux)//
+				.map(encodingUtils::encode)//
+				.map(DefaultPayload::create);
 	}
 
 }
