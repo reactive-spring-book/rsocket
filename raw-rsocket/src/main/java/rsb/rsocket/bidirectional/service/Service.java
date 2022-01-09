@@ -37,13 +37,16 @@ class Service implements SocketAcceptor {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void ready() throws Exception {
-		RSocketServer.create((setup, sendingSocket) -> Mono.just(new RSocket() {
-			@Override
-			public Flux<Payload> requestStream(Payload payload) {
-				return doStream(sendingSocket, payload);
-			}
-		})).bind(TcpServerTransport.create(this.properties.getRsocket().getHostname(),
-				this.properties.getRsocket().getPort()))
+
+		RSocketServer//
+				.create((setup, sendingSocket) -> Mono.just(new RSocket() {
+					@Override
+					public Flux<Payload> requestStream(Payload payload) {
+						return doStream(sendingSocket, payload);
+					}
+				}))//
+				.bind(TcpServerTransport.create(this.properties.getRsocket().getHostname(),
+						this.properties.getRsocket().getPort())) //
 				.doOnNext(cc -> log.info("server started on the address " + cc.address())) //
 				.block();
 	}
