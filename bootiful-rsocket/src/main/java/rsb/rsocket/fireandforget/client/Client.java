@@ -1,21 +1,17 @@
 package rsb.rsocket.fireandforget.client;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Component;
 
-@Log4j2
+@Slf4j
 @Component
-@RequiredArgsConstructor
-class Client implements ApplicationListener<ApplicationReadyEvent> {
+record Client(RSocketRequester rSocketRequester) {
 
-	private final RSocketRequester rSocketRequester;
-
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+	@EventListener(ApplicationReadyEvent.class)
+	public void ready() {
 		log.info("starting " + Client.class.getName() + '.');
 		rSocketRequester.route("greeting").data("Reactive Spring").send().subscribe();
 	}

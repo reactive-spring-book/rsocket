@@ -25,60 +25,59 @@ import static rsb.rsocket.bidirectional.ClientHealthState.STOPPED;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-class Service implements ApplicationListener<ApplicationReadyEvent>, SocketAcceptor {
+class Service {
 
-	private final BootifulProperties properties;
-
-	private final EncodingUtils encodingUtils;
-
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent are) {
-		log.info("starting " + this.getClass().getName());
-		RSocketFactory//
-				.receive()//
-				.acceptor(this)//
-				.transport(TcpServerTransport.create(
-						this.properties.getRsocket().getHostname(),
-						this.properties.getRsocket().getPort()))//
-				.start()//
-				.subscribe();
-	}
-
-	@Override
-	public Mono<RSocket> accept(ConnectionSetupPayload setup, RSocket clientRsocket) {
-
-		// <1>
-		return Mono.just(new AbstractRSocket() {
-
-			@Override
-			public Flux<Payload> requestStream(Payload payload) {
-
-				// <2>
-				var clientHealthStateFlux = clientRsocket//
-						.requestStream(DefaultPayload.create(new byte[0]))//
-						.map(p -> encodingUtils.decode(p.getDataUtf8(),
-								ClientHealthState.class))//
-						.filter(chs -> chs.getState().equalsIgnoreCase(STOPPED));
-
-				// <3>
-				var replyPayloadFlux = Flux//
-						.fromStream(Stream.generate(() -> {
-							var greetingRequest = encodingUtils
-									.decode(payload.getDataUtf8(), GreetingRequest.class);
-							var message = "Hello, " + greetingRequest.getName() + " @ "
-									+ Instant.now() + "!";
-							return new GreetingResponse(message);
-						}))//
-						.delayElements(Duration
-								.ofSeconds(Math.max(3, (long) (Math.random() * 10))))//
-						.doFinally(signalType -> log.info("finished."));
-
-				return replyPayloadFlux // <4>
-						.takeUntilOther(clientHealthStateFlux)//
-						.map(encodingUtils::encode)//
-						.map(DefaultPayload::create);
-			}
-		});
-	}
+	/* implements ApplicationListener<ApplicationReadyEvent>, */
+	// SocketAcceptor {
+	//
+	// private final BootifulProperties properties;
+	//
+	// private final EncodingUtils encodingUtils;
+	/// *
+	// @Override
+	// public void onApplicationEvent(ApplicationReadyEvent are) {
+	// log.info("starting " + this.getClass().getName());
+	// RSocketFactory//
+	// .receive()//
+	// .acceptor(this)//
+	// .transport(TcpServerTransport.create(this.properties.getRsocket().getHostname(),
+	// this.properties.getRsocket().getPort()))//
+	// .start()//
+	// .subscribe();
+	// }
+	// @Override
+	// public Mono<RSocket> accept(ConnectionSetupPayload setup, RSocket clientRsocket) {
+	//
+	// // <1>
+	// return Mono.just(new AbstractRSocket() {
+	//
+	// @Override
+	// public Flux<Payload> requestStream(Payload payload) {
+	//
+	// // <2>
+	// var clientHealthStateFlux = clientRsocket//
+	// .requestStream(DefaultPayload.create(new byte[0]))//
+	// .map(p -> encodingUtils.decode(p.getDataUtf8(), ClientHealthState.class))//
+	// .filter(chs -> chs.getState().equalsIgnoreCase(STOPPED));
+	//
+	// // <3>
+	// var replyPayloadFlux = Flux//
+	// .fromStream(Stream.generate(() -> {
+	// var greetingRequest = encodingUtils.decode(payload.getDataUtf8(),
+	// GreetingRequest.class);
+	// var message = "Hello, " + greetingRequest.getName() + " @ " + Instant.now() + "!";
+	// return new GreetingResponse(message);
+	// }))//
+	// .delayElements(Duration.ofSeconds(Math.max(3, (long) (Math.random() * 10))))//
+	// .doFinally(signalType -> log.info("finished."));
+	//
+	// return replyPayloadFlux // <4>
+	// .takeUntilOther(clientHealthStateFlux)//
+	// .map(encodingUtils::encode)//
+	// .map(DefaultPayload::create);
+	// }
+	// });
+	// */
+	// }
 
 }

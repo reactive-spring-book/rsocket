@@ -1,6 +1,6 @@
 package rsb.rsocket.errors.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 @Controller
 class ErrorController {
 

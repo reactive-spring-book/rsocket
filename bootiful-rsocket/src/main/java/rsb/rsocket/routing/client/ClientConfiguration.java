@@ -9,10 +9,8 @@ import rsb.rsocket.BootifulProperties;
 class ClientConfiguration {
 
 	@Bean
-	RSocketRequester rSocketRequester(BootifulProperties properties,
-			RSocketRequester.Builder builder) {
-		return builder.connectTcp(properties.getRsocket().getHostname(),
-				properties.getRsocket().getPort()).block();
+	RSocketRequester rSocketRequester(BootifulProperties properties, RSocketRequester.Builder builder) {
+		return builder.tcp(properties.getRsocket().getHostname(), properties.getRsocket().getPort());
 	}
 
 }

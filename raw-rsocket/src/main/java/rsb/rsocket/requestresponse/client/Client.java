@@ -1,7 +1,7 @@
 package rsb.rsocket.requestresponse.client;
 
 import io.rsocket.Payload;
-import io.rsocket.RSocketFactory;
+import io.rsocket.core.RSocketClient;
 import io.rsocket.transport.netty.client.TcpClientTransport;
 import io.rsocket.util.DefaultPayload;
 import lombok.RequiredArgsConstructor;
@@ -16,31 +16,25 @@ import rsb.rsocket.BootifulProperties;
 @Log4j2
 @Component
 @RequiredArgsConstructor
-class Client implements ApplicationListener<ApplicationReadyEvent>, Ordered {
+class Client /* implements ApplicationListener<ApplicationReadyEvent>, Ordered */ {
 
 	private final BootifulProperties properties;
 
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-		log.info("starting " + Client.class.getName() + '.');
-		Flux<String> reply = RSocketFactory//
-				.connect()// <1>
-				.transport(TcpClientTransport.create(
-						this.properties.getRsocket().getHostname(),
-						this.properties.getRsocket().getPort()))//
-				.start()//
-				.flatMapMany(socket -> { // <2>
-					var reactiveSpring = DefaultPayload.create("Reactive Spring");
-					return socket//
-							.requestResponse(reactiveSpring)//
-							.map(Payload::getDataUtf8);
-				});
-		reply.subscribe(log::info);
-	}
+	/*
+	 *
+	 * @Override public void onApplicationEvent(ApplicationReadyEvent
+	 * applicationReadyEvent) { log.info("starting " + Client.class.getName() + '.');
+	 * Flux<String> reply = RSocketClient// .connect()// <1>
+	 * .transport(TcpClientTransport.create(this.properties.getRsocket().getHostname(),
+	 * this.properties.getRsocket().getPort()))// .start()// .flatMapMany(socket -> { //
+	 * <2> var reactiveSpring = DefaultPayload.create("Reactive Spring"); return socket//
+	 * .requestResponse(reactiveSpring)// .map(Payload::getDataUtf8); });
+	 * reply.subscribe(log::info); }
+	 */
 
-	@Override
-	public int getOrder() {
-		return Ordered.LOWEST_PRECEDENCE;
-	}
+	// @Override
+	// public int getOrder() {
+	// return Ordered.LOWEST_PRECEDENCE;
+	// }
 
 }

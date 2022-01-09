@@ -1,10 +1,10 @@
 package rsb.rsocket.fireandforget.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
-@Log4j2
+@Slf4j
 @Controller
 class GreetingController {
 

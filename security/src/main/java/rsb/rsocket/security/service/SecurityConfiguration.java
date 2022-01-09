@@ -18,10 +18,8 @@ class SecurityConfiguration {
 	@Bean
 	MapReactiveUserDetailsService authentication() {
 		return new MapReactiveUserDetailsService(
-				User.withDefaultPasswordEncoder().username("rwinch").password("pw")
-						.roles("ADMIN", "USER").build(),
-				User.withDefaultPasswordEncoder().username("jlong").password("pw")
-						.roles("USER").build());
+				User.withDefaultPasswordEncoder().username("rwinch").password("pw").roles("ADMIN", "USER").build(),
+				User.withDefaultPasswordEncoder().username("jlong").password("pw").roles("USER").build());
 	}
 
 	// <2>
@@ -36,8 +34,7 @@ class SecurityConfiguration {
 	@Bean
 	RSocketMessageHandler rSocketMessageHandler(RSocketStrategies strategies) {
 		var mh = new RSocketMessageHandler();
-		mh.getArgumentResolverConfigurer()
-				.addCustomResolver(new AuthenticationPrincipalArgumentResolver());
+		mh.getArgumentResolverConfigurer().addCustomResolver(new AuthenticationPrincipalArgumentResolver());
 		mh.setRSocketStrategies(strategies);
 		return mh;
 	}

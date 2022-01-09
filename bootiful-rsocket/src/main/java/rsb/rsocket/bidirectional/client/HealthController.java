@@ -23,8 +23,7 @@ class HealthController {
 				.fromStream(Stream//
 						.generate(() -> {
 							var now = new Date().getTime();
-							var stop = ((start + delayInSeconds) < now)
-									&& Math.random() > .8;
+							var stop = ((start + delayInSeconds) < now) && Math.random() > .8;
 							return new ClientHealthState(stop ? STOPPED : STARTED);
 						}))//
 				.delayElements(Duration.ofSeconds(5));

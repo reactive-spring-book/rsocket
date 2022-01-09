@@ -1,6 +1,7 @@
 package rsb.rsocket.fireandforget.client;
 
-import io.rsocket.RSocketFactory;
+//import io.rsocket.RSocketFactory;
+import io.rsocket.core.RSocketServer;
 import io.rsocket.transport.netty.client.TcpClientTransport;
 import io.rsocket.util.DefaultPayload;
 import lombok.RequiredArgsConstructor;
@@ -12,23 +13,18 @@ import rsb.rsocket.BootifulProperties;
 
 @Log4j2
 @Component
-@RequiredArgsConstructor
-class Client implements ApplicationListener<ApplicationReadyEvent> {
 
-	private final BootifulProperties properties;
+record Client(BootifulProperties properties) {
 
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-		log.info("starting " + Client.class.getName() + '.');
-		RSocketFactory//
-				.connect()//
-				.transport(TcpClientTransport.create(
-						this.properties.getRsocket().getHostname(),
-						this.properties.getRsocket().getPort()))//
-				.start()//
-				.flatMapMany(socket -> socket
-						.fireAndForget(DefaultPayload.create("Reactive Spring")))// <1>
-				.subscribe(log::info);
-	}
+	/*
+	 *
+	 * @Override public void onApplicationEvent(ApplicationReadyEvent
+	 * applicationReadyEvent) { log.info("starting " + Client.class.getName() + '.');
+	 * RSocketServer// // .connect()//
+	 * .transport(TcpClientTransport.create(this.properties.getRsocket().getHostname(),
+	 * this.properties.getRsocket().getPort()))// .start()// .flatMapMany(socket ->
+	 * socket.fireAndForget(DefaultPayload.create("Reactive Spring")))// <1>
+	 * .subscribe(log::info); }
+	 */
 
 }

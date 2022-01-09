@@ -16,8 +16,8 @@ class GreetingController {
 	@MessageMapping("greetings")
 	Flux<GreetingResponse> greet(GreetingRequest request) {
 		return Flux//
-				.fromStream(Stream.generate(() -> new GreetingResponse(
-						"Hello, " + request.getName() + " @ " + Instant.now() + "!")))//
+				.fromStream(Stream.generate(
+						() -> new GreetingResponse("Hello, " + request.getName() + " @ " + Instant.now() + "!")))//
 				.take(10)// <1>
 				.delayElements(Duration.ofSeconds(1));
 	}

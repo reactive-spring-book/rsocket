@@ -14,10 +14,8 @@ class ServiceConfiguration {
 		return strategies -> strategies//
 				.metadataExtractorRegistry(registry -> {
 					// <1>
-					registry.metadataToExtract(Constants.CLIENT_ID, String.class,
-							Constants.CLIENT_ID_HEADER);
-					registry.metadataToExtract(Constants.LANG, String.class,
-							Constants.LANG_HEADER);
+					registry.metadataToExtract(Constants.CLIENT_ID, String.class, Constants.CLIENT_ID_HEADER);
+					registry.metadataToExtract(Constants.LANG, String.class, Constants.LANG_HEADER);
 				})//
 				.decoders(decoders -> decoders.add(StringDecoder.allMimeTypes()));
 	}

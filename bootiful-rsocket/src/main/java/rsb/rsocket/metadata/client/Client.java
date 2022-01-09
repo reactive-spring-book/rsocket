@@ -1,9 +1,8 @@
 package rsb.rsocket.metadata.client;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -12,16 +11,12 @@ import rsb.rsocket.metadata.Constants;
 import java.util.Locale;
 import java.util.UUID;
 
-@Log4j2
+@Slf4j
 @Component
-@RequiredArgsConstructor
-class Client implements ApplicationListener<ApplicationReadyEvent> {
+record Client(RSocketRequester rSocketRequester) {
 
-	private final RSocketRequester rSocketRequester;
-
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent event) {
-
+	@EventListener(ApplicationReadyEvent.class)
+	public void ready() {
 		Mono<Void> one = this.rSocketRequester// <1>
 				.route("message")//
 				.metadata(UUID.randomUUID().toString(), Constants.CLIENT_ID)//
@@ -31,8 +26,7 @@ class Client implements ApplicationListener<ApplicationReadyEvent> {
 		Mono<Void> two = this.rSocketRequester// <2>
 				.route("message")//
 				.metadata(metadataSpec -> {
-					metadataSpec.metadata(UUID.randomUUID().toString(),
-							Constants.CLIENT_ID);//
+					metadataSpec.metadata(UUID.randomUUID().toString(), Constants.CLIENT_ID);//
 					metadataSpec.metadata(Locale.JAPANESE.getLanguage(), Constants.LANG);//
 				})//
 				.send();

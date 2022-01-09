@@ -1,6 +1,7 @@
 package rsb.rsocket.integration.integration;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,13 +23,12 @@ import rsb.rsocket.integration.GreetingResponse;
 
 import java.io.File;
 
-@Log4j2
+@Slf4j
 @SpringBootApplication
 public class IntegrationApplication {
 
 	@Bean
-	ClientRSocketConnector clientRSocketConnector(RSocketStrategies strategies,
-			BootifulProperties properties) {// <1>
+	ClientRSocketConnector clientRSocketConnector(RSocketStrategies strategies, BootifulProperties properties) {// <1>
 		ClientRSocketConnector clientRSocketConnector = new ClientRSocketConnector(
 				properties.getRsocket().getHostname(), properties.getRsocket().getPort());
 		clientRSocketConnector.setRSocketStrategies(strategies);
@@ -36,16 +36,14 @@ public class IntegrationApplication {
 	}
 
 	@Bean
-	IntegrationFlow greetingFlow(@Value("${user.home}") File home,
-			ClientRSocketConnector clientRSocketConnector) {
+	IntegrationFlow greetingFlow(@Value("${user.home}") File home, ClientRSocketConnector clientRSocketConnector) {
 
 		var inboundFileAdapter = Files// <2>
 				.inboundAdapter(new File(home, "in"))//
 				.autoCreateDirectory(true);
 
 		return IntegrationFlows//
-				.from(inboundFileAdapter,
-						poller -> poller.poller(pm -> pm.fixedRate(100)))// <3>
+				.from(inboundFileAdapter, poller -> poller.poller(pm -> pm.fixedRate(100)))// <3>
 				.transform(new FileToStringTransformer())// <4>
 				.transform(String.class, GreetingRequest::new)// <5>
 				.handle(RSockets//

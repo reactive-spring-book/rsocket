@@ -17,17 +17,12 @@ class ClientConfiguration {
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	RSocketStrategiesCustomizer rSocketStrategiesCustomizer() {
-		return strategies -> strategies.decoder(new Jackson2JsonDecoder())
-				.encoder(new Jackson2JsonEncoder());
+		return strategies -> strategies.decoder(new Jackson2JsonDecoder()).encoder(new Jackson2JsonEncoder());
 	}
 
 	@Bean
-	RSocketRequester rSocketRequester(BootifulProperties properties,
-			RSocketRequester.Builder builder) {
-		return builder//
-				.connectTcp(properties.getRsocket().getHostname(),
-						properties.getRsocket().getPort()) //
-				.block();
+	RSocketRequester rSocketRequester(BootifulProperties properties, RSocketRequester.Builder builder) {
+		return builder.tcp(properties.getRsocket().getHostname(), properties.getRsocket().getPort());
 	}
 
 }

@@ -24,9 +24,7 @@ class GreetingsController {
 	}
 
 	private Flux<GreetingResponse> greet(GreetingRequest request) {
-		return Flux
-				.fromStream(Stream.generate(
-						() -> new GreetingResponse("Hello, " + request.getName() + "!")))
+		return Flux.fromStream(Stream.generate(() -> new GreetingResponse("Hello, " + request.getName() + "!")))
 				.delayElements(Duration.ofSeconds(1));
 	}
 
