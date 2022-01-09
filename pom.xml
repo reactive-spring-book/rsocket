@@ -12,7 +12,6 @@
         <relativePath/>
     </parent>
     <modules>
-        <module>raw-rsocket</module>
         <module>security</module>
         <module>integration</module>
         <module>bootiful-rsocket</module>
