@@ -10,7 +10,7 @@ public class ErrorApplication {
 	@SneakyThrows
 	public static void main(String[] args) {
 		SpringApplication.run(ErrorApplication.class, args);
-		System.in.read();
+		Thread.currentThread().join();
 	}
 
 }

@@ -10,7 +10,7 @@ public class EncodingApplication {
 	@SneakyThrows
 	public static void main(String[] args) {
 		SpringApplication.run(EncodingApplication.class, args);
-		System.in.read();
+		Thread.currentThread().join();
 	}
 
 }

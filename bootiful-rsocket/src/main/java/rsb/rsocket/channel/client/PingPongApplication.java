@@ -10,7 +10,7 @@ public class PingPongApplication {
 	@SneakyThrows
 	public static void main(String[] args) {
 		SpringApplication.run(PingPongApplication.class, args);
-		System.in.read();
+		Thread.currentThread().join();
 	}
 
 }

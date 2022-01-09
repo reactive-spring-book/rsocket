@@ -1,17 +1,18 @@
-package rsb.rsocket.security.client;
+package rsb.rsocket.channel.service;
 
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Log4j2
+/**
+ * Handles channel requests. Run this first.
+ */
 @SpringBootApplication
-public class SecurityApplication {
+public class ServiceApplication {
 
 	@SneakyThrows
-	public static void main(String args[]) {
-		SpringApplication.run(SecurityApplication.class, args);
+	public static void main(String[] args) {
+		SpringApplication.run(ServiceApplication.class, args);
 		Thread.currentThread().join();
 	}
 

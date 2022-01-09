@@ -16,6 +16,7 @@
         <module>integration</module>
         <module>bootiful-rsocket</module>
         <module>common</module>
+        <module>raw-rsocket</module>
     </modules>
     <dependencies>
         <dependency>

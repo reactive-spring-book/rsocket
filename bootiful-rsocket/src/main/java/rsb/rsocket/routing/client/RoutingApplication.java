@@ -10,7 +10,7 @@ public class RoutingApplication {
 	@SneakyThrows
 	public static void main(String[] args) {
 		SpringApplication.run(RoutingApplication.class, args);
-		System.in.read();
+		Thread.currentThread().join();
 	}
 
 }

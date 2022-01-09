@@ -1,16 +1,12 @@
-package rsb.rsocket.metadata.client;
+package rsb.rsocket.metadata.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@RequiredArgsConstructor
 public class MetadataApplication {
 
-	@SneakyThrows
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		SpringApplication.run(MetadataApplication.class, args);
 		Thread.currentThread().join();
 	}

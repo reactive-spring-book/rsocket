@@ -1,4 +1,4 @@
-package rsb.rsocket.requestresponse.client;
+package rsb.rsocket.requestresponse.service;
 
 import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
@@ -10,7 +10,7 @@ public class RequestResponseApplication {
 	@SneakyThrows
 	public static void main(String[] arrrImAPirate) {
 		SpringApplication.run(RequestResponseApplication.class, arrrImAPirate);
-		Thread.currentThread().join();
+		Thread.currentThread().join();// <1>
 	}
 
 }

@@ -10,7 +10,7 @@ public class SetupApplication {
 	@SneakyThrows
 	public static void main(String[] args) {
 		SpringApplication.run(SetupApplication.class, args);
-		System.in.read();
+		Thread.currentThread().join();
 	}
 
 }
