@@ -18,9 +18,11 @@ record Service(BootifulProperties properties) {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void ready() {
-		var socketAcceptor = SocketAcceptor.forRequestChannel(payloads -> Flux.from(payloads).map(Payload::getDataUtf8)
-				.map(s -> "Echo: " + s).map(DefaultPayload::create)//
-		);
+		var socketAcceptor = SocketAcceptor //
+				.forRequestChannel(payloads -> Flux.from(payloads)// <1>
+						.map(Payload::getDataUtf8).map(s -> "Echo: " + s)// <2>
+						.map(DefaultPayload::create)//
+				);
 		RSocketServer.create(socketAcceptor)
 				.bind(TcpServerTransport.create(this.properties.getRsocket().getHostname(),
 						this.properties.getRsocket().getPort()))

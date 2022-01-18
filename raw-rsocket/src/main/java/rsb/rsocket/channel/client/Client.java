@@ -28,9 +28,9 @@ record Client(BootifulProperties properties) {
 						this.properties.getRsocket().getPort()));
 		RSocketClient//
 				.from(socket)//
-				.requestChannel(Flux.interval(Duration.ofSeconds(1)).map(i -> DefaultPayload.create("Hello @ " + i)))//
+				.requestChannel(Flux.interval(Duration.ofSeconds(1)).map(i -> DefaultPayload.create("Hello @ " + i)))// <1>
 				.map(Payload::getDataUtf8)//
-				.take(10)//
+				.take(10)// <2>
 				.subscribe(log::info);
 	}
 }
