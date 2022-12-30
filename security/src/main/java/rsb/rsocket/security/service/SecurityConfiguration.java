@@ -16,6 +16,7 @@ class SecurityConfiguration {
 
 	// <1>
 	@Bean
+	@SuppressWarnings("deprecation")
 	MapReactiveUserDetailsService authentication() {
 		return new MapReactiveUserDetailsService(
 				User.withDefaultPasswordEncoder().username("rwinch").password("pw").roles("ADMIN", "USER").build(),
