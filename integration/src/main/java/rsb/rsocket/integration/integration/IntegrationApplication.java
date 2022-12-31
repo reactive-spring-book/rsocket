@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.integration.core.GenericHandler;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.file.dsl.Files;
 import org.springframework.integration.file.transformer.FileToStringTransformer;
-import org.springframework.integration.handler.GenericHandler;
 import org.springframework.integration.rsocket.ClientRSocketConnector;
 import org.springframework.integration.rsocket.RSocketInteractionModel;
 import org.springframework.integration.rsocket.dsl.RSockets;
@@ -39,7 +38,7 @@ public class IntegrationApplication {
 		var inboundFileAdapter = Files// <2>
 				.inboundAdapter(new File(home, "in"))//
 				.autoCreateDirectory(true);
-		return IntegrationFlows//
+		return IntegrationFlow //
 				.from(inboundFileAdapter, poller -> poller.poller(pm -> pm.fixedRate(100)))// <3>
 				.transform(new FileToStringTransformer())// <4>
 				.transform(String.class, GreetingRequest::new)// <5>
